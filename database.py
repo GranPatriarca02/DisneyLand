@@ -23,3 +23,5 @@ def cerrar_db():
     if not db.is_closed():
         db.close()
         print(" Desconectado de la base de datos")
+conectar_db()
+cerrar_db()
