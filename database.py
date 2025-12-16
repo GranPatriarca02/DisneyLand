@@ -12,7 +12,7 @@ def conectar_db():
     """Conectar a la base de datos"""
     try:
         db.connect()
-        print(" Conectado a la base de datos")
+        print("Conectado a la base de datos")
         return True
     except Exception as e:
         print(f" Error al conectar: {e}")
@@ -23,5 +23,3 @@ def cerrar_db():
     if not db.is_closed():
         db.close()
         print(" Desconectado de la base de datos")
-conectar_db()
-cerrar_db()

@@ -8,10 +8,10 @@ def crear_tablas():
     try:
         conectar_db()
         db.create_tables([VisitanteModel, AtraccionModel, TicketModel], safe=True)
-        print("✓ Tablas creadas exitosamente")
+        print("Tablas creadas exitosamentee")
         return True
     except Exception as e:
-        print(f"✗ Error al crear tablas: {e}")
+        print(f"Error al crear tablas: {e}")
         return False
 
 def eliminar_tablas():
@@ -19,10 +19,10 @@ def eliminar_tablas():
     try:
         conectar_db()
         db.drop_tables([TicketModel, AtraccionModel, VisitanteModel], safe=True)
-        print("✓ Tablas eliminadas exitosamente")
+        print("Tablas eliminadas exitosamente")
         return True
     except Exception as e:
-        print(f"✗ Error al eliminar tablas: {e}")
+        print(f"Error al eliminar tablas: {e}")
         return False
 
 def reiniciar_tablas():
