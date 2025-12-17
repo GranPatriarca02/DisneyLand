@@ -4,7 +4,7 @@ from playhouse.postgres_ext import *
 
 class AtraccionRepositorie:
     
-    # --- MÉTODOS DE CREACIÓN Y BÚSQUEDA ---
+    # MÉTODOS DE CREACIÓN Y BÚSQUEDA 
 
     @staticmethod
     def crear_atraccion(nombre, tipo, altura_minima, detalles=None):
@@ -47,7 +47,7 @@ class AtraccionRepositorie:
             print(f"Error: {e}"); 
             return None
 
-    # --- MÉTODOS DE ACTUALIZACIÓN Y ELIMINACIÓN ---
+    #  MÉTODOS DE ACTUALIZACIÓN Y ELIMINACIÓN
 
     @staticmethod
     def cambiar_estado_atraccion(atraccion_id, activa):
@@ -72,7 +72,7 @@ class AtraccionRepositorie:
             print(f"Error: {e}"); 
             return False
 
-    # --- CONSULTAS ESPECIALIZADAS (FILTROS JSONB) ---
+    #  CONSULTAS ESPECIALIZADAS
 
     @staticmethod
     def atracciones_intensidad_mayor(intensidad):
@@ -140,13 +140,13 @@ class AtraccionRepositorie:
             print(f"Error: {e}"); 
             return False
 
-    # --- REPORTES Y LÓGICA DE NEGOCIO ---
+    #  REPORTES Y LÓGICA DE NEGOCIO 
 
     @staticmethod
     def atracciones_mas_vendidas(limite=5):
         """ Calcula el ranking de atracciones basado en tickets emitidos """
         try:
-            from models.ticket_model import TicketModel
+            from models.tickets_model import TicketModel
             return list(
                 AtraccionModel
                 .select(AtraccionModel, fn.COUNT(TicketModel.id).alias('total_tickets'))
