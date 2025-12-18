@@ -11,12 +11,12 @@ def mostrar_menu_principal():
     print("1. Crear visitante")
     print("2. Listar visitantes")
     print("3. Eliminar visitante")
-    '''print("\n GESTIÓN DE ATRACCIONES ")
+    print("\n GESTIÓN DE ATRACCIONES ")
     print("4. Crear atracción")
     print("5. Listar atracciones")
     print("6. Cambiar estado atracción")
     print("7. Eliminar atracción")
-    print("\n GESTIÓN DE TICKETS ")
+    '''print("\n GESTIÓN DE TICKETS ")
     print("8. Crear ticket")
     print("9. Listar tickets")
     print("10. Marcar ticket como usado")
@@ -60,6 +60,18 @@ def main():
             
             elif opcion == 3:
                 eliminar_visitante_menu()
+                
+            elif opcion == 4:
+                crear_atraccion_menu()
+            
+            elif opcion == 5:
+                listar_atracciones()
+            
+            elif opcion == 6:
+                cambiar_estado_atraccion_menu()
+            
+            elif opcion == 7:
+                eliminar_atraccion_menu()
             
             
         

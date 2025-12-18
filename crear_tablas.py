@@ -6,7 +6,6 @@ from models.tickets_model import TicketModel
 def crear_tablas():
     """Crear todas las tablas en la base de datos"""
     try:
-        conectar_db()
         db.create_tables([VisitanteModel, AtraccionModel, TicketModel], safe=True)
         print("Tablas creadas exitosamentee")
         return True
@@ -17,7 +16,6 @@ def crear_tablas():
 def eliminar_tablas():
     """Eliminar todas las tablas (usar con precaución)"""
     try:
-        conectar_db()
         db.drop_tables([TicketModel, AtraccionModel, VisitanteModel], safe=True)
         print("Tablas eliminadas exitosamente")
         return True

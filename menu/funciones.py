@@ -119,3 +119,128 @@ def eliminar_visitante_menu():
         print("Error: No se pudo eliminar al visitante")
         
     return exito
+
+    #CRUD de atracciones
+
+def crear_atraccion_menu():
+    """Menú para crear una atracción y retorna el objeto creado"""
+    print("CREAR ATRACCION")
+    nombre = input("Nombre: ")
+    
+    print("Tipos disponibles: extrema, familiar, infantil, acuatica")
+    tipo = input("Tipo: ")
+    
+    print("Altura minima (cm):")
+    altura_minima = validar_entero()
+    
+    detalles = None
+    atraccion = None
+    valido = False
+    
+    while not valido:
+        respuesta = input("quieres agregar detalles? (s/n): ").lower()
+        if respuesta == 's':
+            detalles = {}
+            print("Duracion (segundos):")
+            detalles['duracion_segundos'] = validar_entero()
+            
+            print("Capacidad por turno:")
+            detalles['capacidad_por_turno'] = validar_entero()
+            
+            print("Intensidad (1-10):")
+            detalles['intensidad'] = validar_entero()
+            
+        
+            entrada_caracteristicas = input("Caracteristicas (separadas por comas): ").split(',')
+            lista_caracteristicas_limpia = []
+            for caracteristica in entrada_caracteristicas:
+                caracteristica_limpia = caracteristica.strip()
+                if caracteristica_limpia:
+                    lista_caracteristicas_limpia.append(caracteristica_limpia)
+            
+            detalles['caracteristicas'] = lista_caracteristicas_limpia
+            
+            detalles['horarios'] = {
+                'apertura': input("Hora apertura (HH:MM): "),
+                'cierre': input("Hora cierre (HH:MM): "),
+                'mantenimiento': []
+            }
+            
+            atraccion = AtraccionRepositorie.crear_atraccion(nombre, tipo, altura_minima, detalles)
+            valido = True
+            
+        elif respuesta == 'n':
+            atraccion = AtraccionRepositorie.crear_atraccion(nombre, tipo, altura_minima)
+            valido = True
+        else:
+            print("Error: Opcion no valida. Ingrese 's' o 'n'.")
+    
+    if atraccion:
+        print(f"Confirmacion: Atraccion creada con ID: {atraccion.id}")
+    else:
+        print("Error: No se pudo crear la atraccion")
+        
+    return atraccion
+
+def listar_atracciones():
+    """Listar todas las atracciones y retorna la lista"""
+    print("LISTA DE ATRACCIONES")
+    atracciones = AtraccionRepositorie.obtener_todas_atracciones()
+    
+    if not atracciones:
+        print("No hay atracciones registradas")
+        return []
+    
+    for a in atracciones:
+        print(f"\nID: {a.id}")
+        print(f"Nombre: {a.nombre}")
+        print(f"Tipo: {a.tipo}")
+        print(f"Altura minima: {a.altura_minima} cm")
+        print(f"Activa: {'Si' if a.activa else 'No'}")
+        if a.detalles:
+            print(f"Detalles: {json.dumps(a.detalles, indent=2)}")
+            
+    return atracciones
+
+def cambiar_estado_atraccion_menu():
+    """Cambiar estado de una atracción y retorna el nuevo estado"""
+    print("CAMBIAR ESTADO ATRACCION")
+    print("ID de la atraccion:")
+    atraccion_id = validar_entero()
+    
+    print("Estado: 1=Activa, 0=Inactiva")
+    valido=False
+    while not valido:
+        
+        estado = validar_entero()
+        if estado in (0,1):
+
+            nuevo_estado = bool(estado)
+            valido=True
+        else:
+            print("valor incorrecto")
+
+        
+    exito = AtraccionRepositorie.cambiar_estado_atraccion(atraccion_id, nuevo_estado)
+        
+    if exito:
+        print("Estado cambiado exitosamente")
+    else:
+        print("No se pudo cambiar el estado")
+        
+    return exito
+
+def eliminar_atraccion_menu():
+    """Eliminar una atracción y retorna True si fue exitoso"""
+    print("ELIMINAR ATRACCION")
+    print("ID de la atraccion:")
+    atraccion_id = validar_entero()
+    
+    exito = AtraccionRepositorie.eliminar_atraccion(atraccion_id)
+    
+    if exito:
+        print("Confirmacion: Atraccion eliminada exitosamente")
+    else:
+        print("Error: No se pudo eliminar la atraccion")
+        
+    return exito
