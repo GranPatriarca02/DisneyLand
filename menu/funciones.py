@@ -35,7 +35,7 @@ def validar_fecha():
             return datetime.strptime(fecha, "%Y-%m-%d").date()
         except ValueError:
             print("Error: Formato de fecha inválido. Use YYYY-MM-DD")
-
+    #CRUD de visitantes
 def crear_visitante_menu():
     """Menú para crear un visitante y retorna el objeto creado"""
     print(" CREAR VISITANTE")
@@ -242,5 +242,118 @@ def eliminar_atraccion_menu():
         print("Confirmacion: Atraccion eliminada exitosamente")
     else:
         print("Error: No se pudo eliminar la atraccion")
+        
+    return exito
+    #CRUD de Tickets
+
+def crear_ticket_menu():
+    """Menú para crear un ticket y retorna el objeto creado"""
+    print("CREAR TICKET")
+    
+    print("ID del visitante:")
+    visitante_id = validar_entero()
+    
+    # Validación de ticket general/específico
+    general = False
+    atraccion_id = None
+    valido_tipo = False
+    while not valido_tipo:
+        respuesta = input("¿Es un ticket general? (s/n): ").lower()
+        if respuesta == 's':
+            general = True
+            valido_tipo = True
+        elif respuesta == 'n':
+            print("ID de la atraccion:")
+            atraccion_id = validar_entero()
+            valido_tipo = True
+        else:
+            print("Error: Ingrese 's' para general o 'n' para atraccion especifica.")
+    
+    # Validación de fecha
+    fecha_visita = validar_fecha()
+    
+    print("\nTipos de ticket: general, colegio, empleado")
+    tipo_ticket = input("Tipo de ticket: ")
+    
+    detalles_compra = {}
+    print("Precio:")
+    detalles_compra['precio'] = validar_float()
+    
+    # Bucle para Descuentos
+    entrada_descuentos = input("Descuentos aplicados (separados por comas): ").split(',')
+    lista_descuentos = []
+    for descuento in entrada_descuentos:
+        descuento_limpio = descuento.strip()
+        if descuento_limpio:
+            lista_descuentos.append(descuento_limpio)
+    detalles_compra['descuentos_aplicados'] = lista_descuentos
+    
+    # Bucle para Servicios
+    entrada_servicios = input("Servicios extra (separados por comas): ").split(',')
+    lista_servicios = []
+    for servicio in entrada_servicios:
+        servicio_limpio = servicio.strip()
+        if servicio_limpio:
+            lista_servicios.append(servicio_limpio)
+    detalles_compra['servicios_extra'] = lista_servicios
+    
+    detalles_compra['metodo_pago'] = input("Metodo de pago: ")
+    
+    ticket = TicketRepositorie.crear_ticket(
+        visitante_id, fecha_visita, tipo_ticket, detalles_compra, atraccion_id
+    )
+    
+    if ticket:
+        print(f"Ticket creado con ID: {ticket.id}")
+    else:
+        print("Error: No se pudo crear el ticket")
+        
+    return ticket
+
+def listar_tickets():
+    """Listar todos los tickets y retorna la lista"""
+    print("LISTA DE TICKETS")
+    tickets = TicketRepositorie.obtener_todos_tickets()
+    
+    if not tickets:
+        print("No hay tickets registrados")
+        return []
+    
+    for t in tickets:
+        print(f"\nID: {t.id}")
+        id_visitante = t.visitante.id
+        nombre_visitante = t.visitante.nombre
+        print(f"Visitante: ID {id_visitante} - {nombre_visitante}")
+        
+        # Para la atracción, como puede ser None (si es ticket general)
+        # usamos una estructura simple de if/else
+        if t.atraccion is None:
+            nombre_atraccion = "General"
+        else:
+            nombre_atraccion = t.atraccion.nombre
+            
+        print(f"Atraccion: {nombre_atraccion}")
+        print(f"Tipo: {t.tipo_ticket}")
+        print(f"Fecha visita: {t.fecha_visita}")
+        if t.usado:
+            print("Ticket usado: Si")
+        else:
+            print("Ticket usado: No")
+        if t.detalles_compra:
+            print(f"Detalles: {json.dumps(t.detalles_compra, indent=2)}")
+            
+    return tickets
+def marcar_ticket_usado_menu():
+    """Marcar un ticket como usado y retorna el resultado"""
+    print("MARCAR TICKET USADO")
+    print("ID del ticket:")
+    ticket_id = validar_entero()
+    
+    exito = TicketRepositorie.marcar_ticket_usado(ticket_id)
+    
+    if exito:
+        print("Confirmacion: Ticket marcado como usado")
+    else:
+        print("Error: No se pudo marcar el ticket")
         
     return exito
