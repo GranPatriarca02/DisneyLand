@@ -7,7 +7,7 @@ def crear_tablas():
     """Crear todas las tablas en la base de datos"""
     try:
         db.create_tables([VisitanteModel, AtraccionModel, TicketModel], safe=True)
-        print("Tablas creadas exitosamentee")
+        print("Tablas verificadas exitosamentee")
         return True
     except Exception as e:
         print(f"Error al crear tablas: {e}")

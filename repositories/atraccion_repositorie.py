@@ -101,9 +101,9 @@ class AtraccionRepositorie:
         """ Busca atracciones que contengan todas las características solicitadas """
         try:
             query = AtraccionModel.select()
-            for carac in caracteristicas:
+            for caracteristica in caracteristicas:
                 query = query.where(
-                    AtraccionModel.detalles['caracteristicas'].cast('text').contains(carac)
+                    AtraccionModel.detalles['caracteristicas'].cast('text').contains(caracteristica)
                 )
             return list(query)
         except Exception as e:

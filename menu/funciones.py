@@ -41,7 +41,7 @@ def crear_visitante_menu():
     print(" CREAR VISITANTE")
     nombre = input("Nombre: ")
     valido = False
-    while not valido :
+    while not valido:
         email = input("Email: ")
         if validar_email(email):
             valido = True
@@ -54,36 +54,66 @@ def crear_visitante_menu():
     preferencias = None
     valido = False
     while not valido:
-        respuesta = input("¿Tienes alguna preferencia?(s/n)")
-        if respuesta.lower() == 's':
+        print("\n¿Tienes alguna preferencia?")
+        print("1. Sí")
+        print("2. No")
+        opcion = validar_entero()
+
+        if opcion == 1:
             preferencias = {}
-            preferencias['tipo_favorito'] = input("Tipo favorito (extrema/familiar/infantil/acuatica): ")
+
+            print("\nTipo preferencia:")
+            print("1. extrema")
+            print("2. familiar")
+            print("3. infantil")
+            print("4. acuatica")
+
+            tipo_valido = False
+            while not tipo_valido:
+                tipo_opcion = validar_entero()
+                if tipo_opcion == 1:
+                    preferencias['tipo_favorito'] = "extrema"
+                    tipo_valido = True
+                elif tipo_opcion == 2:
+                    preferencias['tipo_favorito'] = "familiar"
+                    tipo_valido = True
+                elif tipo_opcion == 3:
+                    preferencias['tipo_favorito'] = "infantil"
+                    tipo_valido = True
+                elif tipo_opcion == 4:
+                    preferencias['tipo_favorito'] = "acuatica"
+                    tipo_valido = True
+                else:
+                    print("Opción no válida")
 
             restricciones = input("Restricciones (separadas por comas): ").split(',')
             lista_restricciones_limpia = []
 
             for restriccion in restricciones:
-                restriccion_limpia = restriccion.strip() # Quitamos espacios en blanco
-                if restriccion_limpia:         # Verificamos que no sea una cadena vacía
+                restriccion_limpia = restriccion.strip()
+                if restriccion_limpia:
                     lista_restricciones_limpia.append(restriccion_limpia)
 
             preferencias['restricciones'] = lista_restricciones_limpia
-
             preferencias['historial_visitas'] = []
+
             visitante = VisitanteRepositorie.crear_visitante(nombre, email, altura, preferencias)
             valido = True
-        elif respuesta.lower() == 'n':
+
+        elif opcion == 2:
             print("Sin preferencias")
             visitante = VisitanteRepositorie.crear_visitante(nombre, email, altura)
             valido = True
         else:
             print("Opcion no valida")
+
     if visitante:
         print(f"Confirmacion: Visitante creado con ID: {visitante.id}")
     else:
         print("Error: No se pudo crear el visitante")
         
     return visitante
+
 
 def listar_visitantes():
     """Listar todos los visitantes y retorna la lista"""
@@ -127,8 +157,30 @@ def crear_atraccion_menu():
     print("CREAR ATRACCION")
     nombre = input("Nombre: ")
     
-    print("Tipos disponibles: extrema, familiar, infantil, acuatica")
-    tipo = input("Tipo: ")
+    print("Tipos disponibles:")
+    print("1. extrema")
+    print("2. familiar")
+    print("3. infantil")
+    print("4. acuatica")
+
+    tipo = ""
+    valido = False
+    while not valido:
+        opcion_tipo = validar_entero()
+        if opcion_tipo == 1:
+            tipo = "extrema"
+            valido = True
+        elif opcion_tipo == 2:
+            tipo = "familiar"
+            valido = True
+        elif opcion_tipo == 3:
+            tipo = "infantil"
+            valido = True
+        elif opcion_tipo == 4:
+            tipo = "acuatica"
+            valido = True
+        else:
+            print("Opción no válida")
     
     print("Altura minima (cm):")
     altura_minima = validar_entero()
@@ -138,9 +190,14 @@ def crear_atraccion_menu():
     valido = False
     
     while not valido:
-        respuesta = input("quieres agregar detalles? (s/n): ").lower()
-        if respuesta == 's':
+        print("\n¿Quieres agregar detalles?")
+        print("1. Sí")
+        print("2. No")
+        opcion = validar_entero()
+
+        if opcion == 1:
             detalles = {}
+
             print("Duracion (segundos):")
             detalles['duracion_segundos'] = validar_entero()
             
@@ -150,9 +207,9 @@ def crear_atraccion_menu():
             print("Intensidad (1-10):")
             detalles['intensidad'] = validar_entero()
             
-        
             entrada_caracteristicas = input("Caracteristicas (separadas por comas): ").split(',')
             lista_caracteristicas_limpia = []
+
             for caracteristica in entrada_caracteristicas:
                 caracteristica_limpia = caracteristica.strip()
                 if caracteristica_limpia:
@@ -169,11 +226,11 @@ def crear_atraccion_menu():
             atraccion = AtraccionRepositorie.crear_atraccion(nombre, tipo, altura_minima, detalles)
             valido = True
             
-        elif respuesta == 'n':
+        elif opcion == 2:
             atraccion = AtraccionRepositorie.crear_atraccion(nombre, tipo, altura_minima)
             valido = True
         else:
-            print("Error: Opcion no valida. Ingrese 's' o 'n'.")
+            print("Error: Opcion no valida")
     
     if atraccion:
         print(f"Confirmacion: Atraccion creada con ID: {atraccion.id}")
@@ -258,22 +315,44 @@ def crear_ticket_menu():
     atraccion_id = None
     valido_tipo = False
     while not valido_tipo:
-        respuesta = input("¿Es un ticket general? (s/n): ").lower()
-        if respuesta == 's':
+        print("\n¿Es un ticket general?")
+        print("1. Sí (Ticket general)")
+        print("2. No (Ticket específico)")
+        opcion = validar_entero()
+
+        if opcion == 1:
             general = True
             valido_tipo = True
-        elif respuesta == 'n':
+        elif opcion == 2:
             print("ID de la atraccion:")
             atraccion_id = validar_entero()
             valido_tipo = True
         else:
-            print("Error: Ingrese 's' para general o 'n' para atraccion especifica.")
+            print("Error: Opcion no valida")
     
     # Validación de fecha
     fecha_visita = validar_fecha()
     
-    print("\nTipos de ticket: general, colegio, empleado")
-    tipo_ticket = input("Tipo de ticket: ")
+    print("\nTipos de ticket:")
+    print("1. general")
+    print("2. colegio")
+    print("3. empleado")
+
+    valido = False
+    tipo_ticket = ""
+    while not valido:
+        opcion = validar_entero()
+        if opcion == 1:
+            tipo_ticket = "general"
+            valido = True
+        elif opcion == 2:
+            tipo_ticket = "colegio"
+            valido = True
+        elif opcion == 3:
+            tipo_ticket = "empleado"
+            valido = True
+        else:
+            print("Opción no válida")
     
     detalles_compra = {}
     print("Precio:")
@@ -357,3 +436,49 @@ def marcar_ticket_usado_menu():
         print("Error: No se pudo marcar el ticket")
         
     return exito
+
+    #Metodos listar
+
+def listar_tickets_visitante():
+    """Listar tickets de un visitante específico"""
+    print("elige el id del visitante")
+    visitante_id = validar_entero()
+    tickets = TicketRepositorie.obtener_tickets_visitante(visitante_id)
+    print(f"\nTickets del visitante (Total: {len(tickets)}):")
+    for t in tickets:
+        if t.atraccion is None:
+            atraccion = "General"
+        else:
+            atraccion = t.atraccion.nombre
+        
+        print(f"- Ticket {t.id}: {atraccion} - {t.fecha_visita}")
+
+def listar_tickets_atraccion():
+    """Listar tickets de una atracción específica"""
+    print("elige el id de la atraccion")
+    atraccion_id = validar_entero()
+    tickets = TicketRepositorie.obtener_tickets_atraccion(atraccion_id)
+    print(f"\nTickets de la atracción (Total: {len(tickets)}):")
+    for t in tickets:
+        if t.visitante is None:
+            visitante = "Desconocido"
+        else:
+            visitante = t.visitante.nombre
+        
+        print(f"- Ticket {t.id}: Visitante {visitante} - {t.fecha_visita}")
+
+def listar_visitantes_atraccion():
+    """Listar visitantes con ticket para una atracción"""
+    print("elige el id de la atraccion")
+    atraccion_id = validar_entero()
+    visitantes = TicketRepositorie.obtener_visitantes_con_ticket_atraccion(atraccion_id)
+    print(f"\nVisitantes con ticket (Total: {len(visitantes)}):")
+    for v in visitantes:
+        if v is None:
+            nombre = "Desconocido"
+            email = "Sin email"
+        else:
+            nombre = v.nombre
+            email = v.email
+            print(f"- {nombre} ({email})")
+        

@@ -20,10 +20,10 @@ def mostrar_menu_principal():
     print("8. Crear ticket")
     print("9. Listar tickets")
     print("10. Marcar ticket como usado")
-    '''print("11. Listar tickets de un visitante")
+    print("11. Listar tickets de un visitante")
     print("12. Listar tickets de una atracción")
     print("13. Visitantes con ticket para atracción")
-    print("\n CONSULTAS Y REPORTES ")
+    '''print("\n CONSULTAS Y REPORTES ")
     print("14. Consultas especializadas")
     print("15. Modificaciones JSONB")
     print("\n SISTEMA ")
@@ -81,6 +81,15 @@ def main():
             
             elif opcion == 10:
                 marcar_ticket_usado_menu()
+
+            elif opcion == 11:
+                listar_tickets_visitante()
+                
+            elif opcion == 12:
+               listar_tickets_atraccion()
+            
+            elif opcion == 13:
+                listar_visitantes_atraccion()
             
         
         except Exception as e:
