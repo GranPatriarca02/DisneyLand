@@ -481,4 +481,112 @@ def listar_visitantes_atraccion():
             nombre = v.nombre
             email = v.email
             print(f"- {nombre} ({email})")
+
+        # CONSULTAS 
+
+def consultas_menu():
+    """Menú de consultas"""
+    salir = False
+    while not salir:
+        print("\n=== MENÚ DE CONSULTAS ===")
+        print("1. Visitantes con preferencia extrema")
+        print("2. Atracciones con intensidad > 7")
+        print("3. Tickets colegio < 30€")
+        print("4. Atracciones duración > 120 seg")
+        print("5. Visitantes con problemas cardíacos")
+        print("6. Atracciones con looping y caída libre")
+        print("7. Tickets con descuento estudiante")
+        print("8. Atracciones con mantenimiento")
+        print("9. Visitantes por cantidad de tickets")
+        print("10. Top 5 atracciones más vendidas")
+        print("11. Visitantes que gastaron > 100€")
+        print("12. Atracciones compatibles visitante")
+        print("0. Volver")
+        print("Seleccione una opción: ")
+        opcion = validar_entero()
+        
+        if opcion == 0:
+            salir = True
+        elif opcion == 1:
+            visitantes = VisitanteRepositorie.visitantes_con_preferencia_extrema()
+            print(f"\nEncontrados {len(visitantes)} visitantes")
+            for v in visitantes:
+                print(f"- {v.nombre} ({v.email})")
+        
+        elif opcion == 2:
+            atracciones = AtraccionRepositorie.atracciones_intensidad_mayor(7)
+            print(f"\nEncontradas {len(atracciones)} atracciones")
+            for a in atracciones:
+                intensidad = a.detalles.get('intensidad', 'N/A')
+                print(f"- {a.nombre} (Intensidad: {intensidad})")
+        
+        elif opcion == 3:
+            tickets = TicketRepositorie.tickets_tipo_colegio_precio_menor(30)
+            print(f"\nEncontrados {len(tickets)} tickets")
+            for t in tickets:
+                precio = t.detalles_compra.get('precio', 'N/A')
+                print(f"- Ticket {t.id} - Precio: {precio}€")
+        
+        elif opcion == 4:
+            atracciones = AtraccionRepositorie.atracciones_duracion_mayor(120)
+            print(f"\nEncontradas {len(atracciones)} atracciones")
+            for a in atracciones:
+                duracion = a.detalles.get('duracion_segundos', 'N/A')
+                print(f"- {a.nombre} (Duración: {duracion}s)")
+        
+        elif opcion == 5:
+            visitantes = VisitanteRepositorie.visitantes_con_problemas_cardiacos()
+            print(f"\nEncontrados {len(visitantes)} visitantes")
+            for v in visitantes:
+                print(f"- {v.nombre} ({v.email})")
+        
+        elif opcion == 6:
+            atracciones = AtraccionRepositorie.atracciones_con_caracteristicas(['looping', 'caida_libre'])
+            print(f"\nEncontradas {len(atracciones)} atracciones")
+            for a in atracciones:
+                print(f"- {a.nombre}")
+        
+        elif opcion == 7:
+            tickets = TicketRepositorie.tickets_con_descuento('estudiante')
+            print(f"\nEncontrados {len(tickets)} tickets")
+            for t in tickets:
+                print(f"- Ticket {t.id} - Visitante: {t.visitante.nombre}")
+        
+        elif opcion == 8:
+            atracciones = AtraccionRepositorie.atracciones_con_mantenimiento()
+            print(f"\nEncontradas {len(atracciones)} atracciones")
+            for a in atracciones:
+                print(f"- {a.nombre}")
+        
+        elif opcion == 9:
+            visitantes = VisitanteRepositorie.visitantes_ordenados_por_tickets()
+            print("\nVisitantes ordenados por tickets:")
+            for v in visitantes:
+                total = getattr(v, 'total_tickets', 0)
+                print(f"- {v.nombre}: {total} tickets")
+        
+        elif opcion == 10:
+            atracciones = AtraccionRepositorie.atracciones_mas_vendidas(5)
+            print("\nTop 5 atracciones más vendidas:")
+            for a in atracciones:
+                total = getattr(a, 'total_tickets', 0)
+                print(f"- {a.nombre}: {total} tickets")
+        
+        elif opcion == 11:
+            visitantes = VisitanteRepositorie.visitantes_gastado_mas_de(100)
+            print("\nVisitantes que gastaron más de 100€:")
+            for v in visitantes:
+                total = getattr(v, 'total_gastado', 0)
+                print(f"- {v.nombre}: {total}€")
+        
+        elif opcion == 12:
+            print("ID del visitante: ")
+            visitante_id = validar_entero()
+            atracciones = AtraccionRepositorie.atracciones_compatibles_visitante(visitante_id)
+            print(f"\nAtracciones compatibles:")
+            for a in atracciones:
+                print(f"- {a.nombre} ({a.tipo})")
+        else:
+            print("Opcion no valida")
+        
         

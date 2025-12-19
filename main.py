@@ -23,9 +23,9 @@ def mostrar_menu_principal():
     print("11. Listar tickets de un visitante")
     print("12. Listar tickets de una atracción")
     print("13. Visitantes con ticket para atracción")
-    '''print("\n CONSULTAS Y REPORTES ")
+    print("\n CONSULTAS Y REPORTES ")
     print("14. Consultas especializadas")
-    print("15. Modificaciones JSONB")
+    '''print("15. Modificaciones JSONB")
     print("\n SISTEMA ")
     print("0. Salir")
     print("="*50)'''
@@ -90,6 +90,8 @@ def main():
             
             elif opcion == 13:
                 listar_visitantes_atraccion()
+            elif opcion == 14:
+                consultas_menu()
             
         
         except Exception as e:
