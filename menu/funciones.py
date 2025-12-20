@@ -217,11 +217,38 @@ def crear_atraccion_menu():
             
             detalles['caracteristicas'] = lista_caracteristicas_limpia
             
+            # Horarios
             detalles['horarios'] = {
                 'apertura': input("Hora apertura (HH:MM): "),
                 'cierre': input("Hora cierre (HH:MM): "),
                 'mantenimiento': []
             }
+            
+            # Opción de mantenimiento
+            print("\n¿La atracción está en mantenimiento?")
+            print("1. Sí (en mantenimiento)")
+            print("2. No (sin mantenimiento)")
+            valido_mant = False
+            while not valido_mant:
+                opcion_mant = validar_entero()
+                if opcion_mant == 1:
+                    # Añadir información de mantenimiento
+                    fecha_inicio = input("Fecha inicio mantenimiento (YYYY-MM-DD): ")
+                    fecha_fin = input("Fecha fin mantenimiento (YYYY-MM-DD): ")
+                    motivo = input("Motivo del mantenimiento: ")
+                    
+                    detalles['horarios']['mantenimiento'].append({
+                        'fecha_inicio': fecha_inicio,
+                        'fecha_fin': fecha_fin,
+                        'motivo': motivo
+                    })
+                    valido_mant = True
+                    print("Mantenimiento registrado")
+                elif opcion_mant == 2:
+                    valido_mant = True
+                    print("Sin mantenimiento programado")
+                else:
+                    print("Opción no válida")
             
             atraccion = AtraccionRepositorie.crear_atraccion(nombre, tipo, altura_minima, detalles)
             valido = True
@@ -588,5 +615,61 @@ def consultas_menu():
                 print(f"- {a.nombre} ({a.tipo})")
         else:
             print("Opcion no valida")
+
+        #modificaciones del json
+def modificaciones_jsonb_menu():
+    """Menú de modificaciones JSONB"""
+    while True:
+        print("\nMODIFICACIONES JSONB")
+        print("1. Cambiar precio de ticket")
+        print("2. Eliminar restricción de visitante")
+        print("3. Agregar característica a atracción")
+        print("4. Agregar visita a historial")
+        print("0. Volver")
+        
+        opcion = validar_entero()
+        
+        if opcion == 0:
+            break
+        elif opcion == 1:
+            print("introduzca id del ticket a actualizar")
+            ticket_id = validar_entero()
+            print("introduzca nuevo precio")
+            nuevo_precio = validar_float()
+            if TicketRepositorie.cambiar_precio_ticket(ticket_id, nuevo_precio):
+                print("Precio actualizado")
+            else:
+                print("Error al actualizar el precio")
+        
+        elif opcion == 2:
+            print("introduzca id del visitante a actualizar")
+            visitante_id = validar_entero()
+            print("introduzca restriccion a eliminar")
+            restriccion = input("Restricción a eliminar: ")
+            if VisitanteRepositorie.eliminar_restriccion(visitante_id, restriccion):
+                print("Restricción eliminada")
+            else:
+                print("Error al eliminar la restriccion")
+        
+        elif opcion == 3:
+            print("introduzca id de la atraccion a actualizar")
+            atraccion_id = validar_entero()
+            print("introduzca caracteristica nueva a la atraccion")
+            caracteristica = input("Nueva característica: ")
+            if AtraccionRepositorie.agregar_caracteristica(atraccion_id, caracteristica):
+                print("Característica agregada")
+            else:
+                print("Error al agregar caracteristica")
+        
+        elif opcion == 4:
+            print("introduzca id del visitante a actualizar")
+            visitante_id = validar_entero()
+            print("introduzca nueva fecha de visita")
+            fecha = input("Fecha (YYYY-MM-DD): ")
+            atracciones = validar_entero()
+            if VisitanteRepositorie.agregar_visita_historial(visitante_id, fecha, atracciones):
+                print("Visita agregada")
+            else:
+                print("Error al agregar visita")
         
         

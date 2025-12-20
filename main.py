@@ -25,10 +25,10 @@ def mostrar_menu_principal():
     print("13. Visitantes con ticket para atracción")
     print("\n CONSULTAS Y REPORTES ")
     print("14. Consultas especializadas")
-    '''print("15. Modificaciones JSONB")
+    print("15. Modificaciones JSONB")
     print("\n SISTEMA ")
     print("0. Salir")
-    print("="*50)'''
+    print("="*50)
 
 def main():
     """Función principal"""
@@ -90,10 +90,13 @@ def main():
             
             elif opcion == 13:
                 listar_visitantes_atraccion()
+
             elif opcion == 14:
                 consultas_menu()
             
-        
+            elif opcion == 15:
+                modificaciones_jsonb_menu()
+            
         except Exception as e:
             print(f"\n Error inesperado: {e}")
             input("\nPresione Enter para continuar...")
