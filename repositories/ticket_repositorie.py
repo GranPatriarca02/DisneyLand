@@ -1,3 +1,6 @@
+# =============================================================================
+# REPOSITORIO DE TICKETS
+# =============================================================================
 from models.tickets_model import TicketModel
 from models.visitante_model import VisitanteModel
 from models.atraccion_model import AtraccionModel
@@ -6,14 +9,19 @@ from playhouse.postgres_ext import *
 from datetime import datetime
 
 class TicketRepositorie:
-      # MÉTODOS DE CREACIÓN Y BÚSQUEDA 
+    """Gestiona la venta y consulta de tickets"""
+    
+    # =========================================================================
+    # OPERACIONES CRUD 
+    # =========================================================================
+    
     @staticmethod
     def crear_ticket(visitante_id, fecha_visita, tipo_ticket, detalles_compra, atraccion_id=None):
-        """Crear un nuevo ticket"""
+        """Crea un nuevo ticket de entrada"""
         try:
             ticket = TicketModel.create(
                 visitante=visitante_id,
-                atraccion=atraccion_id,
+                atraccion=atraccion_id,  
                 fecha_visita=fecha_visita,
                 tipo_ticket=tipo_ticket,
                 detalles_compra=detalles_compra or {}
@@ -25,7 +33,7 @@ class TicketRepositorie:
     
     @staticmethod
     def obtener_todos_tickets():
-        """Obtener todos los tickets"""
+        """Recupera todos los tickets del sistema"""
         try:
             return list(TicketModel.select())
         except Exception as e:
@@ -34,7 +42,7 @@ class TicketRepositorie:
     
     @staticmethod
     def obtener_tickets_visitante(visitante_id):
-        """Obtener tickets de un visitante específico"""
+        """Obtiene todos los tickets de un visitante específico"""
         try:
             return list(TicketModel.select().where(
                 TicketModel.visitante == visitante_id
@@ -45,7 +53,7 @@ class TicketRepositorie:
     
     @staticmethod
     def obtener_tickets_atraccion(atraccion_id):
-        """Obtener tickets vendidos para una atracción específica"""
+        """Obtiene todos los tickets vendidos para una atracción específica"""
         try:
             return list(TicketModel.select().where(
                 TicketModel.atraccion == atraccion_id
@@ -56,7 +64,7 @@ class TicketRepositorie:
     
     @staticmethod
     def obtener_visitantes_con_ticket_atraccion(atraccion_id):
-        """Obtener visitantes que tienen ticket para una atracción (directa o general)"""
+        """Obtiene visitantes que pueden acceder a una atracción"""
         try:
             return list(
                 VisitanteModel
@@ -66,7 +74,7 @@ class TicketRepositorie:
                     (TicketModel.atraccion == atraccion_id) | 
                     (TicketModel.atraccion.is_null(True))
                 )
-                .distinct()
+                .distinct() 
             )
         except Exception as e:
             print(f"Error: {e}")
@@ -74,7 +82,7 @@ class TicketRepositorie:
     
     @staticmethod
     def marcar_ticket_usado(ticket_id):
-        """Marcar un ticket como usado"""
+        """Marca un ticket como utilizado"""
         try:
             ticket = TicketModel.get_by_id(ticket_id)
             ticket.usado = True
@@ -85,9 +93,13 @@ class TicketRepositorie:
             print(f"Error: {e}")
             return False
     
+    # =========================================================================
+    # CONSULTAS CON JSONB
+    # =========================================================================
+    
     @staticmethod
     def tickets_tipo_colegio_precio_menor(precio):
-        """Tickets tipo colegio con precio menor a X"""
+        """Busca tickets escolares por debajo de un precio determinado"""
         try:
             return list(TicketModel.select().where(
                 (TicketModel.tipo_ticket == 'colegio') &
@@ -99,7 +111,7 @@ class TicketRepositorie:
     
     @staticmethod
     def tickets_con_descuento(descuento):
-        """Tickets que tengan un descuento específico"""
+        """Encuentra tickets que tienen aplicado un descuento específico"""
         try:
             return list(TicketModel.select().where(
                 TicketModel.detalles_compra['descuentos_aplicados'].cast('text').contains(descuento)
@@ -108,9 +120,13 @@ class TicketRepositorie:
             print(f"Error: {e}")
             return []
     
+    # =========================================================================
+    # MODIFICACIONES DE JSONB
+    # =========================================================================
+    
     @staticmethod
     def cambiar_precio_ticket(ticket_id, nuevo_precio):
-        """Cambiar el precio de un ticket"""
+        """Actualiza el precio de un ticket ya vendido"""
         try:
             ticket = TicketModel.get_by_id(ticket_id)
             detalles = ticket.detalles_compra or {}
@@ -121,3 +137,4 @@ class TicketRepositorie:
         except Exception as e:
             print(f"Error: {e}")
             return False
+

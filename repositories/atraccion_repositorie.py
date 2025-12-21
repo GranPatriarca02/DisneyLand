@@ -1,14 +1,20 @@
+# =============================================================================
+# REPOSITORIO DE ATRACCIONES
+# =============================================================================
 from models.atraccion_model import AtraccionModel
 from peewee import *
 from playhouse.postgres_ext import *
 
 class AtraccionRepositorie:
+    """Gestiona todas las operaciones relacionadas con atracciones"""
     
-    # MÉTODOS DE CREACIÓN Y BÚSQUEDA 
-
+    # =========================================================================
+    # OPERACIONES CRUD 
+    # =========================================================================
+    
     @staticmethod
     def crear_atraccion(nombre, tipo, altura_minima, detalles=None):
-        """ Registra una nueva atracción en la base de datos """
+        """Registra una nueva atracción en el parque"""
         try:
             return AtraccionModel.create(
                 nombre=nombre,
@@ -22,109 +28,116 @@ class AtraccionRepositorie:
 
     @staticmethod
     def obtener_todas_atracciones():
-        """ Retorna el listado completo de atracciones """
+        """Devuelve todas las atracciones (activas e inactivas)"""
         try:
             return list(AtraccionModel.select())
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def obtener_atracciones_activas():
-        """ Retorna solo las atracciones con estado activo """
+        """Filtra solo las atracciones que están actualmente operativas"""
         try:
             return list(AtraccionModel.select().where(AtraccionModel.activa == True))
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def obtener_atraccion_por_id(atraccion_id):
-        """ Busca una atracción específica por su clave primaria """
+        """Busca una atracción específica por su ID"""
         try:
             return AtraccionModel.get_by_id(atraccion_id)
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return None
-
-    #  MÉTODOS DE ACTUALIZACIÓN Y ELIMINACIÓN
 
     @staticmethod
     def cambiar_estado_atraccion(atraccion_id, activa):
-        """ Alterna la disponibilidad de la atracción """
+        """Activa o desactiva una atracción (mantenimiento, reparaciones, etc.)"""
         try:
             atraccion = AtraccionModel.get_by_id(atraccion_id)
             atraccion.activa = activa
             atraccion.save()
             return True
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return False
 
     @staticmethod
     def eliminar_atraccion(atraccion_id):
-        """ Remueve físicamente el registro de la atracción """
+        """Elimina permanentemente una atracción del sistema"""
         try:
             atraccion = AtraccionModel.get_by_id(atraccion_id)
             atraccion.delete_instance()
             return True
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return False
 
-    #  CONSULTAS ESPECIALIZADAS
+    # =========================================================================
+    # CONSULTAS CON JSONB
+    # =========================================================================
 
     @staticmethod
     def atracciones_intensidad_mayor(intensidad):
-        """ Filtra atracciones por el campo 'intensidad' dentro del JSONB """
+        """Filtra atracciones cuya intensidad supera el valor indicado el campo 'intensidad' está dentro del JSONB 'detalles'"""
         try:
             return list(AtraccionModel.select().where(
                 AtraccionModel.detalles['intensidad'].cast('int') > intensidad
             ))
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def atracciones_duracion_mayor(segundos):
-        """ Filtra atracciones por duración mínima definida en detalles """
+        """Busca atracciones que duran más de X segundos"""
         try:
             return list(AtraccionModel.select().where(
                 AtraccionModel.detalles['duracion_segundos'].cast('int') > segundos
             ))
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def atracciones_con_caracteristicas(caracteristicas):
-        """ Busca atracciones que contengan todas las características solicitadas """
+        """Busca atracciones que contengan todas las características solicitadas"""
         try:
             query = AtraccionModel.select()
+            # Aplica un filtro por cada característica 
             for caracteristica in caracteristicas:
                 query = query.where(
                     AtraccionModel.detalles['caracteristicas'].cast('text').contains(caracteristica)
                 )
             return list(query)
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def atracciones_con_mantenimiento():
+        """Encuentra atracciones que tienen mantenimiento programado"""
         try:
             return list(AtraccionModel.select().where(
-                # Filtramos: que la clave exista Y que no sea una lista vacía
+                # Condición 1: la clave no es NULL
                 (AtraccionModel.detalles['horarios']['mantenimiento'].is_null(False)) &
+                # Condición 2: no es un array vacío []
                 (AtraccionModel.detalles['horarios']['mantenimiento'] != json.dumps([]))
             ))
         except Exception as e:
             print(f"Error: {e}")
             return []
     
+    # =========================================================================
+    # MODIFICACIONES DE JSONB
+    # =========================================================================
+    
     @staticmethod
     def agregar_caracteristica(atraccion_id, caracteristica):
-        """ Inyecta una nueva etiqueta en el array de características del JSONB """
+        """Añade una nueva característica al array de características"""
         try:
             atraccion = AtraccionModel.get_by_id(atraccion_id)
             detalles = atraccion.detalles or {}
@@ -138,14 +151,16 @@ class AtraccionRepositorie:
                 return True
             return False
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return False
 
-    #  REPORTES Y LÓGICA DE NEGOCIO 
+    # =========================================================================
+    # REPORTES Y LÓGICA DE NEGOCIO
+    # =========================================================================
 
     @staticmethod
     def atracciones_mas_vendidas(limite=5):
-        """ Calcula el ranking de atracciones basado en tickets emitidos """
+        """Genera un ranking de las atracciones con más tickets vendidos"""
         try:
             from models.tickets_model import TicketModel
             return list(
@@ -158,12 +173,12 @@ class AtraccionRepositorie:
                 .limit(limite)
             )
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
 
     @staticmethod
     def atracciones_compatibles_visitante(visitante_id):
-        """ Filtra atracciones según altura y gustos del visitante """
+        """Encuentra atracciones adecuadas para un visitante específico"""
         try:
             from models.visitante_model import VisitanteModel
             visitante = VisitanteModel.get_by_id(visitante_id)
@@ -174,8 +189,10 @@ class AtraccionRepositorie:
                 (AtraccionModel.altura_minima <= visitante.altura)
             )
             
-            if fav: query = query.where(AtraccionModel.tipo == fav)
+            # Filtro adicional si tiene preferencia de tipo
+            if fav:
+                query = query.where(AtraccionModel.tipo == fav)
             return list(query)
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []

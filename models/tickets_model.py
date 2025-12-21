@@ -1,3 +1,6 @@
+# =============================================================================
+#  MODELO DE TICKETS
+# =============================================================================
 from models.base_model import BaseModel
 from models.visitante_model import VisitanteModel
 from models.atraccion_model import AtraccionModel
@@ -6,6 +9,7 @@ from playhouse.postgres_ext import BinaryJSONField
 from datetime import datetime
 
 class TicketModel(BaseModel):
+# Modelo que representa un ticket de entrada
     id = AutoField(primary_key=True)
     visitante = ForeignKeyField(VisitanteModel, backref='tickets', on_delete='CASCADE')
     atraccion = ForeignKeyField(AtraccionModel, backref='tickets', null=True, on_delete='SET NULL')
