@@ -1,16 +1,23 @@
+# =============================================================================
+# FUNCIONES DE INTERFAZ DE USUARIO
+# =============================================================================
 from repositories.visitante_repositorie import VisitanteRepositorie
 from repositories.atraccion_repositorie import AtraccionRepositorie
 from repositories.ticket_repositorie import TicketRepositorie
 import json
 from datetime import datetime, date
 
+# =========================================================================
+# FUNCIONES DE VALIDACIÓN
+# =========================================================================
+
 def validar_email(email):
-    """Validar formato de email"""
+    """Valida formato básico de email (contiene @ y .)"""
     verificacion = '@' in email and '.' in email
     return verificacion
 
 def validar_entero():
-    """Validar que el input sea un entero"""
+    """Solicita entrada hasta recibir un número entero válido"""
     while True:
         try:
             num = int(input("Ingrese un número válido:"))
@@ -19,7 +26,7 @@ def validar_entero():
             print("Error: Debe ingresar un número entero")
 
 def validar_float():
-    """Validar que el input sea un float"""
+    """Similar a validar_entero pero para números decimales"""
     while True:
         try:
             num = float(input("Ingrese un número válido:"))
@@ -28,14 +35,17 @@ def validar_float():
             print("Error: Debe ingresar un número válido")
 
 def validar_fecha():
-    """Validar formato de fecha"""
+    """Solicita y valida una fecha en formato YYYY-MM-DD"""
     while True:
         try:
-            fecha = input("Ingrese fecha (YYYY-MM-DD:")
+            fecha = input("Ingrese fecha (YYYY-MM-DD):")
             return datetime.strptime(fecha, "%Y-%m-%d").date()
         except ValueError:
             print("Error: Formato de fecha inválido. Use YYYY-MM-DD")
-    #CRUD de visitantes
+
+# =========================================================================
+# MENÚS CRUD - VISITANTES
+# =========================================================================
 def crear_visitante_menu():
     """Menú para crear un visitante y retorna el objeto creado"""
     print(" CREAR VISITANTE")
@@ -509,7 +519,8 @@ def listar_visitantes_atraccion():
             email = v.email
             print(f"- {nombre} ({email})")
 
-        # CONSULTAS 
+
+#----------------------------------------------------- CONSULTAS--------------------------------------------------------------------
 
 def consultas_menu():
     """Menú de consultas"""
@@ -616,7 +627,8 @@ def consultas_menu():
         else:
             print("Opcion no valida")
 
-        #modificaciones del json
+#----------------------------------------------------- MODIFICACIONES DE JSON--------------------------------------------------------------------
+
 def modificaciones_jsonb_menu():
     """Menú de modificaciones JSONB"""
     while True:
@@ -626,47 +638,57 @@ def modificaciones_jsonb_menu():
         print("3. Agregar característica a atracción")
         print("4. Agregar visita a historial")
         print("0. Volver")
-        
+    # le pedimos al usuario que inserte una opcion y comprobamos que esa opcion sea valida
         opcion = validar_entero()
         
         if opcion == 0:
             break
         elif opcion == 1:
+    # Si el usuario elige la primera opcion le pedimos el ticket a actualizar, comprobamos que lo que el usuario a introducido es valido y le pedimos el nuevo precio del ticket
             print("introduzca id del ticket a actualizar")
             ticket_id = validar_entero()
             print("introduzca nuevo precio")
             nuevo_precio = validar_float()
+    # aqui cambiamos el precio del ticket 
             if TicketRepositorie.cambiar_precio_ticket(ticket_id, nuevo_precio):
                 print("Precio actualizado")
             else:
                 print("Error al actualizar el precio")
         
         elif opcion == 2:
+    # Si el usuario elige la segunda opcion le pedimos el id del visitante a actualizar, comprobamos que lo que el usuario a introducido es valido y le pedimos la restriccion a eliminar
             print("introduzca id del visitante a actualizar")
             visitante_id = validar_entero()
             print("introduzca restriccion a eliminar")
             restriccion = input("Restricción a eliminar: ")
+    # aqui eliminamos la restriccion del visitante
             if VisitanteRepositorie.eliminar_restriccion(visitante_id, restriccion):
                 print("Restricción eliminada")
             else:
                 print("Error al eliminar la restriccion")
         
         elif opcion == 3:
+    # Si el usuario elige la tercera opcion le pedimos el id del visitante y el id de la atraccion a actualizar, comprobamos que lo que el usuario a introducido es valido y le pedimos la caracteristica nueva que quiere meter
+            print("introduzca id del visitante a actualizar")
+            visitante_id = validar_entero()
             print("introduzca id de la atraccion a actualizar")
             atraccion_id = validar_entero()
             print("introduzca caracteristica nueva a la atraccion")
             caracteristica = input("Nueva característica: ")
+    # Aqui añadimos la nueva caracteristica a la atraccion
             if AtraccionRepositorie.agregar_caracteristica(atraccion_id, caracteristica):
                 print("Característica agregada")
             else:
                 print("Error al agregar caracteristica")
         
         elif opcion == 4:
+    # Si el usuario elige la cuarta opcion le pedimos el id del visitante a actualizar, comprobamos que lo que el usuario a introducido es valido y le pedimos la caracteristica nueva que quiere meter
             print("introduzca id del visitante a actualizar")
             visitante_id = validar_entero()
             print("introduzca nueva fecha de visita")
             fecha = input("Fecha (YYYY-MM-DD): ")
             atracciones = validar_entero()
+    # aqui añadimos la nueva fecha de visita del visitante
             if VisitanteRepositorie.agregar_visita_historial(visitante_id, fecha, atracciones):
                 print("Visita agregada")
             else:
