@@ -112,15 +112,16 @@ class AtraccionRepositorie:
 
     @staticmethod
     def atracciones_con_mantenimiento():
-        """ Lista atracciones que poseen claves de mantenimiento en su horario """
         try:
             return list(AtraccionModel.select().where(
-                AtraccionModel.detalles['horarios']['mantenimiento'].exists()
+                # Filtramos: que la clave exista Y que no sea una lista vacía
+                (AtraccionModel.detalles['horarios']['mantenimiento'].is_null(False)) &
+                (AtraccionModel.detalles['horarios']['mantenimiento'] != json.dumps([]))
             ))
         except Exception as e:
-            print(f"Error: {e}"); 
+            print(f"Error: {e}")
             return []
-
+    
     @staticmethod
     def agregar_caracteristica(atraccion_id, caracteristica):
         """ Inyecta una nueva etiqueta en el array de características del JSONB """
